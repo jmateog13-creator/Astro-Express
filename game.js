@@ -1398,12 +1398,31 @@ function endGame(victory) {
         document.getElementById('victoryModal').classList.add('show');
         playFanfare();
         checkAchievements();
+
+        // Pont Aulatech: arc complet (ruta 20 superada).
+        if (g.level >= CURRICULUM.length) {
+            window.AulaTechBridge?.sendOnce('astro-express', {
+                completat: true,
+                precisio: g.accuracy / 100,
+                errors: g.levelErrors,
+                rachaMax: g.bestCombo,
+                perfecte: isPerfect,
+            });
+        }
     } else {
         saveAll();
         document.getElementById('defeatScore').textContent = g.score;
         document.getElementById('defeatObjective').textContent = `${g.objective}/${g.objectiveTarget}`;
         document.getElementById('defeatCombo').textContent = '×' + g.bestCombo;
         document.getElementById('defeatModal').classList.add('show');
+
+        // Pont Aulatech: ruta fallida (sense vides). No sendOnce: es pot reintentar.
+        window.AulaTechBridge?.send('astro-express', {
+            completat: false,
+            precisio: g.accuracy / 100,
+            errors: g.levelErrors,
+            rachaMax: g.bestCombo,
+        });
     }
 }
 
