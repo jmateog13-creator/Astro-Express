@@ -1399,16 +1399,16 @@ function endGame(victory) {
         playFanfare();
         checkAchievements();
 
-        // Pont Aulatech: arc complet (ruta 20 superada).
-        if (g.level >= CURRICULUM.length) {
-            window.AulaTechBridge?.sendOnce('astro-express', {
-                completat: true,
-                precisio: g.accuracy / 100,
-                errors: g.levelErrors,
-                rachaMax: g.bestCombo,
-                perfecte: isPerfect,
-            });
-        }
+        // Pont Aulatech: abans només l'arc complet (ruta 20) reportava completat
+        // i qui en superava sis no quedava registrat enlloc. Ara paga cada ruta
+        // superada; l'arc complet només decideix el flag `perfecte`.
+        window.AulaTechBridge?.sendOnce('astro-express', {
+            completat: true,
+            precisio: g.accuracy / 100,
+            errors: g.levelErrors,
+            rachaMax: g.bestCombo,
+            perfecte: g.level >= CURRICULUM.length && isPerfect,
+        });
     } else {
         saveAll();
         document.getElementById('defeatScore').textContent = g.score;
