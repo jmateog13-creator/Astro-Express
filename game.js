@@ -1399,11 +1399,9 @@ function endGame(victory) {
         playFanfare();
         checkAchievements();
 
-        // Pont Aulatech: abans només l'arc complet (ruta 20) reportava completat
-        // i qui en superava sis no quedava registrat enlloc. Ara paga cada ruta
-        // superada; l'arc complet només decideix el flag `perfecte`.
-        window.AulaTechBridge?.sendOnce('astro-express', {
-            completat: true,
+        // completat = joc sencer; els nivells intermedis queden registrats sense pagar
+        window.AulaTechBridge?.send('astro-express', {
+            completat: g.level >= CURRICULUM.length,
             precisio: g.accuracy / 100,
             errors: g.levelErrors,
             rachaMax: g.bestCombo,
