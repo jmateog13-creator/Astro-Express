@@ -43,6 +43,10 @@ const CURRICULUM = [
     { id: 20, name: 'ALPHA-CENTAURI',  pool: ['DO','RE','MI','FA','SOL','LA','SI'],              fallSpeed: 290, spawnInterval: 850,  target: 35, desc: 'Final · ATAC' }
 ];
 
+// POLÍTICA 1★ (29-09-2026, revisat): porta d'entrada — ruta de 8 planetes (era 20).
+// Els nivells 9-20 (hipervelocitat, saturació, final "ATAC") queden fora.
+CURRICULUM.length = 8;
+
 const ACHIEVEMENTS = [
     { id: 'first_hit',   icon: '★', name: 'PRIMER CONTACTE',     desc: 'Encerta el teu primer tren',         check: s => s.totalCorrect >= 1 },
     { id: 'combo_10',    icon: '⚡', name: 'RACHA',                desc: 'Encadena 10 encerts seguits',         check: s => s.bestCombo >= 10 },
@@ -739,7 +743,7 @@ function initGameplay() {
         canvas, ctx, bloomCanvas,
         running: false, paused: false,
         level: 1, levelData: CURRICULUM[0],
-        score: 0, lives: 3,
+        score: 0, lives: 9,   // POLÍTICA 1★ (29-09-2026): vides generoses (era 3)
         objective: 0, objectiveTarget: 15,
         trains: [],
         nextSpawn: 0,
@@ -853,7 +857,7 @@ function setupLevel(level) {
     g.newNotes = computeNewNotesForLevel(level);
     g.score = 0;
     g.animatedScore = 0;
-    g.lives = 3;
+    g.lives = 9;   // POLÍTICA 1★ (29-09-2026): vides generoses (era 3)
     g.objective = 0;
     g.objectiveTarget = data.target;
     g.trains = [];
