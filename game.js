@@ -531,7 +531,9 @@ function renderLevelGrid() {
 
         const card = document.createElement('div');
         card.className = 'level-card' + (isCompleted ? ' completed' : '') + (!isUnlocked ? ' locked' : '');
-        const stars = isCompleted ? computeStars(completion) : '';
+        // FET / NO FET (30-09-2026): ✓ si superat, sense estrelles per precisió
+        const stars = isCompleted ? '✓' : '';
+        card.setAttribute('aria-label', isCompleted ? `Nivell ${i}, fet` : `Nivell ${i}`);
         card.innerHTML = `
             <div class="level-num">${String(i).padStart(2, '0')}</div>
             <div class="level-name">${level.name}</div>
@@ -550,13 +552,6 @@ function renderLevelGrid() {
     }
     document.getElementById('progressFill').style.width = `${(completedCount / CURRICULUM.length) * 100}%`;
     document.getElementById('progressText').textContent = `${completedCount}/${CURRICULUM.length}`;
-}
-
-function computeStars(c) {
-    if (!c) return '';
-    if (c.accuracy >= 95) return '★★★';
-    if (c.accuracy >= 80) return '★★';
-    return '★';
 }
 
 function difficultyLabel(level) {
