@@ -47,6 +47,16 @@ const CURRICULUM = [
 // Els nivells 9-20 (hipervelocitat, saturació, final "ATAC") queden fora.
 CURRICULUM.length = 8;
 
+/* 1r ESO (?curs=1): 5 rutes lentes (com a molt 78 px/s, ~8 s per tren),
+   menys trens per ruta, tutorial amb frases curtes. Progrés a part. 3r igual. */
+const CURS1 = typeof location !== 'undefined' && new URLSearchParams(location.search).get('curs') === '1';
+if (CURS1) {
+    CURRICULUM.length = 5;
+    [[65, 3000, 6], [70, 2900, 8], [72, 2800, 8], [75, 2800, 10], [78, 2800, 10]].forEach(([v, sp, t], i) => {
+        Object.assign(CURRICULUM[i], { fallSpeed: v, spawnInterval: sp, target: t });
+    });
+}
+
 const ACHIEVEMENTS = [
     { id: 'first_hit',   icon: '★', name: 'PRIMER CONTACTE',     desc: 'Encerta el teu primer tren',         check: s => s.totalCorrect >= 1 },
     { id: 'combo_10',    icon: '⚡', name: 'RACHA',                desc: 'Encadena 10 encerts seguits',         check: s => s.bestCombo >= 10 },
@@ -65,7 +75,7 @@ const ACHIEVEMENTS = [
     { id: 'orbital_master', icon: '✸', name: 'MESTRE ORBITAL',     desc: 'Desbloca tots els altres assoliments', check: (s, all) => Object.keys(s.unlocked).length >= ACHIEVEMENTS.length - 1 }
 ];
 
-const STORAGE_KEY = 'astro-express-v3';
+const STORAGE_KEY = 'astro-express-v3' + (CURS1 ? '_c1' : '');
 
 // ============================================================================
 // ESTAT GLOBAL
@@ -376,6 +386,18 @@ const TUTORIAL_STAGES = [
         finish: true
     }
 ];
+
+if (CURS1) {   // 1r: tutorial més lent i amb frases curtes
+    const T1 = [
+        'El <strong>DO</strong> és a sota del pentagrama, amb una <strong>línia petita</strong>. El tren s\'atura a la línia groga. Prem la <strong>tecla 1</strong>.',
+        'El <strong>SOL</strong> és a la <strong>2a línia</strong>, comptant des de baix. La clau de sol l\'envolta. Prem la <strong>tecla 5</strong>.',
+        'Ara surten <strong>DO i SOL</strong> barrejats. Mira cada nota i envia-la a la seva andana.',
+        'El <strong>MI</strong> és a la <strong>1a línia</strong>, la de baix de tot. Prem la <strong>tecla 3</strong>.',
+        'Encerta <strong>3 trens seguits</strong>. Si falles, tornes a començar a comptar.',
+        'Ja has après. Comença la primera ruta!'
+    ];
+    TUTORIAL_STAGES.forEach((st, i) => { st.desc = T1[i]; if (st.fallSpeed) st.fallSpeed = Math.min(st.fallSpeed, 70); });
+}
 
 function startTutorialFlow() {
     state.currentLevel = 0;
@@ -1937,4 +1959,10 @@ function roundRect(ctx, x, y, w, h, r) {
     ctx.lineTo(x, y + r);
     ctx.quadraticCurveTo(x, y, x + r, y);
     ctx.closePath();
+}
+
+// 1r: portada amb una frase clara
+if (CURS1) {
+    const sub = document.querySelector('.subtitle');
+    if (sub) sub.textContent = 'LLEGEIX LA NOTA I ENVIA EL TREN · 1r ESO';
 }
